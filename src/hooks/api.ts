@@ -2,6 +2,7 @@ import useAxios from "axios-hooks";
 import {
   ITEMS_ENDPOINT,
   TAGS_BY_ITEM_ENDPOINT,
+  TAGS_ENDPOINT,
   TAG_ENDPOINT,
   TAG_GROUPS_ENDPOINT,
 } from "../constants";
@@ -40,10 +41,30 @@ export const useCreateItemTag = () =>
     { manual: true, autoCancel: false }
   );
 
+export const useCreateItemTags = () =>
+  useAxios<OsrsTag[]>(
+    {
+      url: TAGS_ENDPOINT,
+      method: "POST",
+      params: { includeRelated: true },
+    },
+    { manual: true, autoCancel: false }
+  );
+
 export const useDeleteItemTag = () =>
   useAxios<OsrsTag[]>(
     {
       url: TAG_ENDPOINT,
+      method: "DELETE",
+      params: { includeRelated: true },
+    },
+    { manual: true, autoCancel: false }
+  );
+
+export const useDeleteItemTags = () =>
+  useAxios<OsrsTag[]>(
+    {
+      url: TAGS_ENDPOINT,
       method: "DELETE",
       params: { includeRelated: true },
     },

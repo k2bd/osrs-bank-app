@@ -1,7 +1,7 @@
 import { ListItem, ListItemLabel } from "baseui/list";
 import {
-  useCreateItemTag,
-  useDeleteItemTag,
+  useCreateItemTags,
+  useDeleteItemTags,
   useGetItemTags,
 } from "../hooks/api";
 import { OnChangeParams, Select } from "baseui/select";
@@ -25,15 +25,12 @@ const ItemListEntry = ({
     refetchItemTags,
   ] = useGetItemTags(item.itemId);
 
-  if (existingTags) {
-    console.log(item.name);
-    console.log(existingTags);
-  }
-
   const [selectedTagGroups, setSelectedTagGroups] = useState<OsrsTag[]>([]);
 
-  const [{ loading: createItemTagLoading }, createItemTag] = useCreateItemTag();
-  const [{ loading: deleteItemTagLoading }, deleteItemTag] = useDeleteItemTag();
+  const [{ loading: createItemTagsLoading }, createItemTags] =
+    useCreateItemTags();
+  const [{ loading: deleteItemTagsLoading }, deleteItemTags] =
+    useDeleteItemTags();
 
   // Set the initial values when we get a result from the server
   useEffect(() => {
@@ -50,7 +47,16 @@ const ItemListEntry = ({
     const existingGroupNames = existingTags?.map((tag) => tag.groupName) ?? [];
     const newValueGroupNames = params.value
       .map((x) => x.id?.toString())
-      .filter((item): item is string => !!item);
+      .filter((item): item is string => !!item)
+      .map((csvItem) =>
+        csvItem
+          .split(",")
+          .map((item) => item.trim())
+          .filter((item) => !!item)
+      )
+      .flat()
+      .map((val) => val.toLowerCase());
+
     const newTags = newValueGroupNames.filter(
       (groupName) => groupName && !existingGroupNames?.includes(groupName)
     );
@@ -58,17 +64,19 @@ const ItemListEntry = ({
       (tag) => !newValueGroupNames.includes(tag)
     );
 
-    await Promise.all(
-      newTags.map(async (groupName) =>
-        createItemTag({ data: { itemId: item.itemId, groupName: groupName } })
-      )
-    );
+    await createItemTags({
+      data: newTags.map((groupName) => ({
+        itemId: item.itemId,
+        groupName: groupName,
+      })),
+    });
 
-    await Promise.all(
-      deletedTags.map(async (groupName) =>
-        deleteItemTag({ data: { itemId: item.itemId, groupName: groupName } })
-      )
-    );
+    await deleteItemTags({
+      data: deletedTags.map((groupName) => ({
+        itemId: item.itemId,
+        groupName: groupName,
+      })),
+    });
 
     await refetchItemTags();
     await refetchTagGroups();
@@ -77,8 +85,8 @@ const ItemListEntry = ({
   const selectLoading =
     loading ||
     existingTagsLoading ||
-    createItemTagLoading ||
-    deleteItemTagLoading;
+    createItemTagsLoading ||
+    deleteItemTagsLoading;
 
   const tagSelect = (
     <Select

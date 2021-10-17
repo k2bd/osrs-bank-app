@@ -1,5 +1,5 @@
 import { useGetItems, useGetTagGroups } from "../hooks/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pagination, SIZE } from "baseui/pagination";
 import ItemListEntry from "./ItemListEntry";
 import { styled, useStyletron } from "styletron-react";
@@ -17,16 +17,30 @@ const Centered = styled("div", {
 const ItemsList = () => {
   const [css] = useStyletron();
 
+  // Filters
+  const [nameLike, setNameLike] = useState("");
+  const [includeMembers, setIncludeMembers] = useState(true);
+
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(25);
-  const [offset, setOffset] = useState<number>(0);
+
+  // Reset to page 1 if we change filters
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [nameLike, includeMembers]);
 
   const [
     { data: availableTagGroups, loading: availableTagGroupsLoading },
     refetchTagGroups,
   ] = useGetTagGroups({});
 
-  const [{ data, loading }] = useGetItems({ limit: pageSize, offset });
+  const [{ data, loading }] = useGetItems({
+    nameLike,
+    includeMembers,
+    limit: pageSize,
+    offset: pageSize * (currentPage - 1),
+  });
 
   const numPages = Math.ceil((data?.totalCount ?? 0) / pageSize);
 
@@ -47,7 +61,12 @@ const ItemsList = () => {
   return (
     <>
       <Centered>
-        <ItemSearch />
+        <ItemSearch
+          nameLike={nameLike}
+          setNameLike={setNameLike}
+          includeMembers={includeMembers}
+          setIncludeMembers={setIncludeMembers}
+        />
         <ul
           className={css({
             width: "60%",
@@ -62,7 +81,6 @@ const ItemsList = () => {
           onPageChange={({ nextPage }) => {
             const newPage = Math.min(Math.max(nextPage, 1), numPages);
             setCurrentPage(newPage);
-            setOffset(pageSize * (newPage - 1));
           }}
         />
       </Centered>

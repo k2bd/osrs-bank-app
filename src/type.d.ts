@@ -7,7 +7,6 @@ interface OsrsItem {
 
 interface ItemsSearchResult {
   totalCount: number;
-  lastResultId: number;
   items: OsrsItem[];
 }
 
