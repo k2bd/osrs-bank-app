@@ -1,7 +1,6 @@
 import { Pagination } from "baseui/pagination";
 import { Skeleton } from "baseui/skeleton";
 import { useEffect, useState } from "react";
-import { useStyletron } from "styletron-react";
 import { Centered } from "../style";
 import TagGroupListEntry from "./TagGroupListEntry";
 import TagGroupSearch from "./TagGroupSearch";
@@ -14,8 +13,6 @@ interface Props {
 }
 
 const TagGroupsList = ({ availableTagGroups, loading }: Props) => {
-  const [css] = useStyletron();
-
   // Filters
   const [nameLike, setNameLike] = useState("");
 
@@ -34,7 +31,7 @@ const TagGroupsList = ({ availableTagGroups, loading }: Props) => {
 
   const pageTagGroups = filteredTagGroups.slice(
     pageSize * (currentPage - 1),
-    pageSize * currentPage + 1
+    pageSize * currentPage
   );
 
   const [expanded, setExpanded] = useState<React.Key | undefined>(undefined);

@@ -1,4 +1,3 @@
-import { ListItem, ListItemLabel } from "baseui/list";
 import { useGetItemsByTag } from "../hooks/api";
 import ItemToken from "./ItemToken";
 import { MdContentCopy } from "react-icons/md";
@@ -15,12 +14,15 @@ interface Props {
 }
 
 const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
-  const [{ data, loading }] = useGetItemsByTag(groupName);
+  const [{ data: mainItems }] = useGetItemsByTag(groupName, {});
+  const [{ data: allItems }] = useGetItemsByTag(groupName, {
+    includeRelated: true,
+  });
 
-  const itemTokens = (data ?? []).map((item) => <ItemToken item={item} />);
+  const itemTokens = (mainItems ?? []).map((item) => <ItemToken item={item} />);
 
   const copyText =
-    `${groupName},` + data?.map((item) => item.itemId.toString()).join(",");
+    `${groupName},` + allItems?.map((item) => item.itemId.toString()).join(",");
 
   const [isCopied, setCopied] = useClipboard(copyText, {
     successDuration: 500,

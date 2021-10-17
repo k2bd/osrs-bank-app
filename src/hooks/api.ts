@@ -31,15 +31,18 @@ export const useGetItemTags = (itemId: number) =>
     url: TAGS_BY_ITEM_ENDPOINT + `${itemId}`,
   });
 
-export const useGetItemsByTag = (tagName: string) =>
-  useAxios<OsrsItem[]>({ url: ITEMS_BY_TAG_ENDPOINT + `${tagName}` });
+export const useGetItemsByTag = (
+  tagName: string,
+  params: { includeRelated?: boolean }
+) =>
+  useAxios<OsrsItem[]>({ url: ITEMS_BY_TAG_ENDPOINT + `${tagName}`, params });
 
 export const useCreateItemTags = () =>
   useAxios<OsrsTag[]>(
     {
       url: TAGS_ENDPOINT,
       method: "POST",
-      params: { includeRelated: true },
+      params: {},
     },
     { manual: true, autoCancel: false }
   );
@@ -49,7 +52,7 @@ export const useDeleteItemTags = () =>
     {
       url: TAGS_ENDPOINT,
       method: "DELETE",
-      params: { includeRelated: true },
+      params: {},
     },
     { manual: true, autoCancel: false }
   );
