@@ -2,7 +2,6 @@ import React from "react";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Provider as StyletronProvider } from "styletron-react";
 import { BaseProvider, LightTheme } from "baseui";
-import ItemsList from "./components/ItemsList";
 import { useLocalStorage } from "react-use-storage";
 import NavBar from "./components/NavBar";
 import { darkTheme, THEME } from "./style";
@@ -30,7 +29,6 @@ function App() {
       <StyletronProvider value={engine}>
         <BaseProvider theme={theme}>
           <NavBar />
-          <ItemsList />
         </BaseProvider>
       </StyletronProvider>
     </div>

@@ -1,9 +1,9 @@
 import useAxios from "axios-hooks";
 import {
+  ITEMS_BY_TAG_ENDPOINT,
   ITEMS_ENDPOINT,
   TAGS_BY_ITEM_ENDPOINT,
   TAGS_ENDPOINT,
-  TAG_ENDPOINT,
   TAG_GROUPS_ENDPOINT,
 } from "../constants";
 
@@ -31,31 +31,14 @@ export const useGetItemTags = (itemId: number) =>
     url: TAGS_BY_ITEM_ENDPOINT + `${itemId}`,
   });
 
-export const useCreateItemTag = () =>
-  useAxios<OsrsTag[]>(
-    {
-      url: TAG_ENDPOINT,
-      method: "POST",
-      params: { includeRelated: true },
-    },
-    { manual: true, autoCancel: false }
-  );
+export const useGetItemsByTag = (tagName: string) =>
+  useAxios<OsrsItem[]>({ url: ITEMS_BY_TAG_ENDPOINT + `${tagName}` });
 
 export const useCreateItemTags = () =>
   useAxios<OsrsTag[]>(
     {
       url: TAGS_ENDPOINT,
       method: "POST",
-      params: { includeRelated: true },
-    },
-    { manual: true, autoCancel: false }
-  );
-
-export const useDeleteItemTag = () =>
-  useAxios<OsrsTag[]>(
-    {
-      url: TAG_ENDPOINT,
-      method: "DELETE",
       params: { includeRelated: true },
     },
     { manual: true, autoCancel: false }

@@ -19,7 +19,7 @@ const ItemSearch = ({
   setIncludeMembers,
 }: Props) => {
   const [quickNameLike, setQuickNameLike] = useState(nameLike ?? "");
-  const debouncedNameLikeChange = useCallback(debounce(setNameLike, 500), []);
+  const debouncedNameLikeChange = useCallback(debounce(setNameLike, 300), []);
 
   return (
     <>

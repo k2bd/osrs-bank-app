@@ -1,20 +1,23 @@
-import { useGetItems, useGetTagGroups } from "../hooks/api";
+import { useGetItems } from "../hooks/api";
 import { useEffect, useState } from "react";
 import { Pagination, SIZE } from "baseui/pagination";
 import ItemListEntry from "./ItemListEntry";
-import { styled, useStyletron } from "styletron-react";
+import { useStyletron } from "styletron-react";
 import ItemSearch from "./ItemSearch";
 import { Skeleton } from "baseui/skeleton";
+import { Centered } from "../style";
 
-const Centered = styled("div", {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100%",
-});
+interface Props {
+  availableTagGroups: string[];
+  loading: boolean;
+  refetchTagGroups: () => Promise<void>;
+}
 
-const ItemsList = () => {
+const ItemsList = ({
+  availableTagGroups,
+  loading,
+  refetchTagGroups,
+}: Props) => {
   const [css] = useStyletron();
 
   // Filters
@@ -30,12 +33,7 @@ const ItemsList = () => {
     setCurrentPage(1);
   }, [nameLike, includeMembers]);
 
-  const [
-    { data: availableTagGroups, loading: availableTagGroupsLoading },
-    refetchTagGroups,
-  ] = useGetTagGroups({});
-
-  const [{ data, loading }] = useGetItems({
+  const [{ data, loading: getItemsLoading }] = useGetItems({
     nameLike,
     includeMembers,
     limit: pageSize,
@@ -45,16 +43,17 @@ const ItemsList = () => {
   const numPages = Math.ceil((data?.totalCount ?? 0) / pageSize);
 
   const items =
-    loading || !data
-      ? [...Array(pageSize)].map(() => <Skeleton animation height="30px" />)
+    getItemsLoading || !data
+      ? [...Object.keys(Array(pageSize))].map((i) => (
+          <Skeleton key={i} animation height="30px" />
+        ))
       : data.items.map((item) => (
           <ItemListEntry
+            key={item.itemId}
             item={item}
             availableTagGroups={availableTagGroups ?? []}
-            loading={availableTagGroupsLoading}
-            refetchTagGroups={async () => {
-              await refetchTagGroups();
-            }}
+            loading={loading}
+            refetchTagGroups={refetchTagGroups}
           />
         )) ?? [];
 
