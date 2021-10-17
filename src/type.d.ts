@@ -10,3 +10,8 @@ interface ItemsSearchResult {
   lastResultId: number;
   items: OsrsItem[];
 }
+
+interface OsrsTag {
+  itemId: number;
+  groupName: string;
+}

@@ -1,15 +1,9 @@
 import { createDarkTheme } from "baseui";
+import { ThemePrimitives } from "baseui/theme";
 
 export type THEME = "dark" | "light";
 
-const dtPrimitives = {};
-const dtOverrides = {
-  colors: {
-    background: "0x000000",
-  },
-  body: {
-    backgroundColor: "0x000000",
-  },
-};
+const dtPrimitives: Partial<ThemePrimitives> = {};
+const dtOverrides = {};
 
 export const darkTheme = createDarkTheme(dtPrimitives, dtOverrides);
