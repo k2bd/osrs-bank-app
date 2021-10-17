@@ -15,7 +15,9 @@
     "baseui": "^10.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
     "react-scripts": "4.0.3",
+    "react-use-storage": "^0.5.1",
     "styletron-engine-atomic": "^1.4.8",
     "styletron-react": "^6.0.1",
     "typescript": "^4.1.2",
@@ -54,6 +56,9 @@
     "@types/styletron-react": "^5.0.3",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "eslint-plugin-baseui": "^10.5.0"
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-baseui": "^10.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1"
   }
 }

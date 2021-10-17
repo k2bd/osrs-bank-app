@@ -1,12 +1,12 @@
 interface OsrsItem {
-    itemId: number;
-    name: string;
-    members: boolean;
-    iconBase64: string;
+  itemId: number;
+  name: string;
+  members: boolean;
+  iconBase64: string;
 }
 
 interface ItemsSearchResult {
-    totalCount: number;
-    lastResultId: number;
-    items: OsrsItem[];
+  totalCount: number;
+  lastResultId: number;
+  items: OsrsItem[];
 }

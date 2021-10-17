@@ -1,54 +1,36 @@
-import { useGetItems } from "../hooks/api";
-import { StyledSpinnerNext } from "baseui/spinner";
-import { ListItem, ListItemLabel } from "baseui/list";
+import { useGetItems, useGetTagGroups } from "../hooks/api";
 import { useState } from "react";
 import { Pagination, SIZE } from "baseui/pagination";
+import ItemListEntry from "./ItemListEntry";
 
 const ItemsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(25);
   const [offset, setOffset] = useState<number>(0);
 
-  const [{ data, loading }] = useGetItems({limit: pageSize, offset})
+  useGetTagGroups({}); // For caching purposes
 
-  if (loading) {
-    return <StyledSpinnerNext></StyledSpinnerNext>
-  }
+  const [{ data }] = useGetItems({ limit: pageSize, offset });
 
-  const numPages = Math.ceil((data?.totalCount ?? 0) / pageSize)
+  const numPages = Math.ceil((data?.totalCount ?? 0) / pageSize);
 
-  const items = data?.items.map(
-    item => (
-      <ListItem
-        artwork={
-          () => <img src={`data:image/jpeg;base64,${item.iconBase64}`} />
-        }
-        key={item.itemId}
-      >
-        <ListItemLabel>
-          {item.name}
-        </ListItemLabel>
-      </ListItem>
-    )
-  )
+  const items = data?.items.map((item) => <ItemListEntry item={item} />) ?? [];
 
   return (
     <>
-      <ul>
-        {items}
-      </ul>
+      <ul>{items}</ul>
       <Pagination
         numPages={numPages}
         size={SIZE.mini}
         currentPage={currentPage}
-        onPageChange={({nextPage}) => {
-          const newPage = Math.min(Math.max(nextPage, 1), numPages)
+        onPageChange={({ nextPage }) => {
+          const newPage = Math.min(Math.max(nextPage, 1), numPages);
           setCurrentPage(newPage);
           setOffset(pageSize * (newPage - 1));
         }}
       />
     </>
-  )
-}
+  );
+};
 
 export default ItemsList;
