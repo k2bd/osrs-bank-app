@@ -38,7 +38,9 @@ const ItemsList = () => {
             item={item}
             availableTagGroups={availableTagGroups ?? []}
             loading={availableTagGroupsLoading}
-            refetchTagGroups={refetchTagGroups}
+            refetchTagGroups={async () => {
+              await refetchTagGroups();
+            }}
           />
         )) ?? [];
 

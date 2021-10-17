@@ -1,18 +1,17 @@
 import { ListItem, ListItemLabel } from "baseui/list";
-import { Tag } from "baseui/tag";
 import {
   useCreateItemTag,
   useDeleteItemTag,
   useGetItemTags,
 } from "../hooks/api";
-import { OnChangeParams, OptionsT, Select } from "baseui/select";
+import { OnChangeParams, Select } from "baseui/select";
 import { useEffect, useState } from "react";
 
 interface Props {
   item: OsrsItem;
   availableTagGroups: string[];
   loading: boolean;
-  refetchTagGroups: () => Promise<any>;
+  refetchTagGroups: () => Promise<void>;
 }
 
 const ItemListEntry = ({

@@ -1,7 +1,7 @@
 import React from "react";
 import { Client as Styletron } from "styletron-engine-atomic";
 import { Provider as StyletronProvider } from "styletron-react";
-import { BaseProvider, styled, LightTheme } from "baseui";
+import { BaseProvider, LightTheme } from "baseui";
 import ItemsList from "./components/ItemsList";
 import { useLocalStorage } from "react-use-storage";
 import NavBar from "./components/NavBar";
@@ -22,8 +22,9 @@ function App() {
         position: "absolute",
         left: 0,
         top: 0,
-        width: "100%",
+        width: "100vw",
         overflow: "scroll",
+        overflowX: "hidden",
       }}
     >
       <StyletronProvider value={engine}>

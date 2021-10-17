@@ -40,7 +40,6 @@ const NavBar = () => {
               startEnhancer={() => <SiBuymeacoffee />}
               shape="pill"
               kind="tertiary"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
               Support
             </Button>

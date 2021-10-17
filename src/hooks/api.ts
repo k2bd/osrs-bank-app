@@ -31,19 +31,21 @@ export const useGetItemTags = (itemId: number) =>
   });
 
 export const useCreateItemTag = () =>
-  useAxios<OsrsTag>(
+  useAxios<OsrsTag[]>(
     {
       url: TAG_ENDPOINT,
       method: "POST",
+      params: { includeRelated: true },
     },
-    { manual: true }
+    { manual: true, autoCancel: false }
   );
 
 export const useDeleteItemTag = () =>
-  useAxios<OsrsTag>(
+  useAxios<OsrsTag[]>(
     {
       url: TAG_ENDPOINT,
       method: "DELETE",
+      params: { includeRelated: true },
     },
-    { manual: true }
+    { manual: true, autoCancel: false }
   );
