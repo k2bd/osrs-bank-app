@@ -1,4 +1,4 @@
-import { useGetItems } from "../hooks/api";
+import { useGetItems, useGetTagGroups } from "../hooks/api";
 import { useEffect, useState } from "react";
 import { Pagination, SIZE } from "baseui/pagination";
 import ItemListEntry from "./ItemListEntry";
@@ -7,17 +7,7 @@ import ItemSearch from "./ItemSearch";
 import { Skeleton } from "baseui/skeleton";
 import { Centered } from "../style";
 
-interface Props {
-  availableTagGroups: string[];
-  loading: boolean;
-  refetchTagGroups: () => Promise<void>;
-}
-
-const ItemsList = ({
-  availableTagGroups,
-  loading,
-  refetchTagGroups,
-}: Props) => {
+const ItemsList = () => {
   const [css] = useStyletron();
 
   // Filters
@@ -39,6 +29,10 @@ const ItemsList = ({
     limit: pageSize,
     offset: pageSize * (currentPage - 1),
   });
+  const [
+    { data: availableTagGroups, loading: availableTagGroupsLoading },
+    refetchTagGroups,
+  ] = useGetTagGroups({});
 
   const numPages = Math.ceil((data?.totalCount ?? 0) / pageSize);
 
@@ -52,8 +46,10 @@ const ItemsList = ({
             key={item.itemId}
             item={item}
             availableTagGroups={availableTagGroups ?? []}
-            loading={loading}
-            refetchTagGroups={refetchTagGroups}
+            loading={availableTagGroupsLoading}
+            refetchTagGroups={async () => {
+              refetchTagGroups();
+            }}
           />
         )) ?? [];
 

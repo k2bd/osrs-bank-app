@@ -1,11 +1,17 @@
-import { useGetItemsByTag } from "../hooks/api";
+import {
+  useGetItem,
+  useGetItemsByTag,
+  useGetTagGroup,
+  usePutTagGroup,
+} from "../hooks/api";
 import ItemToken from "./ItemToken";
 import { MdContentCopy } from "react-icons/md";
 import { Button } from "baseui/button";
 import useClipboard from "react-use-clipboard";
-import { Check } from "baseui/icon";
+import { Check, Spinner } from "baseui/icon";
 import { Panel } from "baseui/accordion";
 import { FlexRow } from "../style";
+import { ListItem, ListItemLabel } from "baseui/list";
 
 interface Props {
   groupName: string;
@@ -14,19 +20,50 @@ interface Props {
 }
 
 const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
+  const [{ data: group, loading: groupLoading }, refetchGroup] =
+    useGetTagGroup(groupName);
+
   const [{ data: mainItems }] = useGetItemsByTag(groupName, {});
   const [{ data: allItems }] = useGetItemsByTag(groupName, {
     includeRelated: true,
   });
 
-  const itemTokens = (mainItems ?? []).map((item) => <ItemToken item={item} />);
+  const [{ loading: putTagGroupLoading }, putTagGroup] = usePutTagGroup();
 
+  const [{ data: iconItem }] = useGetItem(group?.itemIconId ?? 0);
+
+  const exportItems = group?.itemIconId
+    ? allItems?.sort((x, y) =>
+        x.itemId == group.itemIconId ? -1 : y.itemId == group.itemIconId ? 1 : 0
+      )
+    : allItems;
   const copyText =
-    `${groupName},` + allItems?.map((item) => item.itemId.toString()).join(",");
-
+    `${groupName},` +
+    exportItems?.map((item) => item.itemId.toString()).join(",");
   const [isCopied, setCopied] = useClipboard(copyText, {
     successDuration: 500,
   });
+
+  if (!group || groupLoading) {
+    return <Spinner />;
+  }
+
+  const itemTokens = (mainItems ?? []).map((item) => (
+    <ItemToken
+      item={item}
+      disabled={putTagGroupLoading}
+      selected={item.itemId === group?.itemIconId}
+      onClick={async () => {
+        const newTagGroup: OsrsTagGroup = {
+          groupName,
+          description: group?.description,
+          itemIconId: item.itemId,
+        };
+        await putTagGroup({ data: newTagGroup });
+        await refetchGroup();
+      }}
+    />
+  ));
 
   const copyButton = (
     <Button kind="secondary" onClick={setCopied}>
@@ -34,11 +71,25 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
     </Button>
   );
 
+  const title = (
+    <ListItem
+      artwork={() =>
+        group.itemIconId && iconItem ? (
+          <img src={`data:image/jpeg;base64,${iconItem.iconBase64}`} />
+        ) : (
+          <></>
+        )
+      }
+    >
+      <ListItemLabel description={group.description}>{groupName}</ListItemLabel>
+    </ListItem>
+  );
+
   return (
     <FlexRow>
       <Panel
         key={groupName}
-        title={groupName}
+        title={title}
         expanded={expanded}
         onClick={() => setExpanded(expanded ? undefined : groupName)}
       >

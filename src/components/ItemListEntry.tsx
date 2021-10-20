@@ -4,12 +4,12 @@ import {
   useDeleteItemTags,
   useGetItemTags,
 } from "../hooks/api";
-import { OnChangeParams, Select } from "baseui/select";
+import { OnChangeParams, OptionsT, Select } from "baseui/select";
 import { useEffect, useState } from "react";
 
 interface Props {
   item: OsrsItem;
-  availableTagGroups: string[];
+  availableTagGroups: OsrsTagGroup[];
   loading: boolean;
   refetchTagGroups: () => Promise<void>;
 }
@@ -38,10 +38,12 @@ const ItemListEntry = ({
       setSelectedTagGroups(existingTags);
   }, [existingTags, existingTagsLoading]);
 
-  const tagOptions = (availableTagGroups ?? []).map((groupName) => ({
-    id: groupName,
-    label: groupName,
-  }));
+  const tagOptions: OptionsT = (availableTagGroups ?? []).map(
+    ({ groupName }) => ({
+      id: groupName,
+      label: groupName, // TODO: make label pretty
+    })
+  );
 
   const tagChangeHandler = async (params: OnChangeParams) => {
     const existingGroupNames = existingTags?.map((tag) => tag.groupName) ?? [];

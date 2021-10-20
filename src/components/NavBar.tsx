@@ -34,11 +34,6 @@ const NavBar = () => {
   const [theme, setTheme] = useLocalStorage<THEME>("theme", "dark");
   const [activeTab, setActiveTab] = useState("0");
 
-  const [
-    { data: availableTagGroups, loading: availableTagGroupsLoading },
-    refetchTagGroups,
-  ] = useGetTagGroups({});
-
   const themeButton = (
     <Button
       shape="circle"
@@ -86,22 +81,10 @@ const NavBar = () => {
         activateOnFocus
       >
         <Tab title="Items">
-          <ItemsList
-            availableTagGroups={availableTagGroups ?? []}
-            loading={availableTagGroupsLoading}
-            refetchTagGroups={async () => {
-              await refetchTagGroups();
-            }}
-          />
+          <ItemsList />
         </Tab>
         <Tab title="Tags">
-          <TagGroupsList
-            availableTagGroups={availableTagGroups ?? []}
-            loading={availableTagGroupsLoading}
-            refetchTagGroups={async () => {
-              await refetchTagGroups();
-            }}
-          />
+          <TagGroupsList />
         </Tab>
         <Tab title="Import">
           <TagImporter />

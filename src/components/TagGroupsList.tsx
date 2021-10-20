@@ -5,14 +5,9 @@ import { Centered } from "../style";
 import TagGroupListEntry from "./TagGroupListEntry";
 import TagGroupSearch from "./TagGroupSearch";
 import { StatelessAccordion } from "baseui/accordion";
+import { useGetTagGroups } from "../hooks/api";
 
-interface Props {
-  availableTagGroups: string[];
-  loading: boolean;
-  refetchTagGroups: () => Promise<void>;
-}
-
-const TagGroupsList = ({ availableTagGroups, loading }: Props) => {
+const TagGroupsList = () => {
   // Filters
   const [nameLike, setNameLike] = useState("");
 
@@ -25,24 +20,26 @@ const TagGroupsList = ({ availableTagGroups, loading }: Props) => {
     setCurrentPage(1);
   }, [nameLike]);
 
-  const filteredTagGroups = availableTagGroups.filter((group) =>
-    group.toLowerCase().includes(nameLike.toLowerCase())
-  );
+  const [
+    { data: availableTagGroups, loading: availableTagGroupsLoading },
+    refetchTagGroups,
+  ] = useGetTagGroups({ nameLike });
 
-  const pageTagGroups = filteredTagGroups.slice(
-    pageSize * (currentPage - 1),
-    pageSize * currentPage
-  );
+  const pageTagGroups =
+    availableTagGroups?.slice(
+      pageSize * (currentPage - 1),
+      pageSize * currentPage
+    ) ?? [];
 
   const [expanded, setExpanded] = useState<React.Key | undefined>(undefined);
 
-  const numPages = Math.ceil(filteredTagGroups.length / pageSize);
+  const numPages = Math.ceil(availableTagGroups?.length ?? 0 / pageSize);
 
-  const pageTagGroupItems = loading
+  const pageTagGroupItems = availableTagGroupsLoading
     ? [...Object.keys(Array(pageSize))].map((i) => (
         <Skeleton key={i} animation height="30px" />
       ))
-    : pageTagGroups.map((groupName) => (
+    : pageTagGroups.map(({ groupName }) => (
         <TagGroupListEntry
           key={groupName}
           groupName={groupName}

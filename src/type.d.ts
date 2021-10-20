@@ -14,3 +14,9 @@ interface OsrsTag {
   itemId: number;
   groupName: string;
 }
+
+interface OsrsTagGroup {
+  groupName: string;
+  description?: string;
+  itemIconId?: number;
+}
