@@ -13,7 +13,7 @@ import { Check, Delete, Spinner } from "baseui/icon";
 import { Panel } from "baseui/accordion";
 import { FlexRow } from "../style";
 import { ListItem, ListItemLabel } from "baseui/list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "baseui/input";
 import {
   Modal,
@@ -53,6 +53,8 @@ const TagGroupListEntry = ({
   const [newDescription, setNewDescription] = useState<string | undefined>(
     group?.description
   );
+
+  useEffect(() => setNewDescription(group?.description), [group?.description]);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
@@ -97,6 +99,14 @@ const TagGroupListEntry = ({
 
   const title = (
     <ListItem
+      overrides={{
+        Root: {
+          style: ({ $theme }) => ({
+            outline: `${$theme.colors.primary700} solid`,
+            backgroundColor: $theme.colors.primary700,
+          }),
+        },
+      }}
       artwork={() =>
         group.itemIconId !== undefined && iconItem ? (
           <img src={`data:image/jpeg;base64,${iconItem.iconBase64}`} />
@@ -113,7 +123,7 @@ const TagGroupListEntry = ({
     <FlexRow>
       <Input
         size="compact"
-        value={newDescription || group.description}
+        value={newDescription}
         onChange={(e) => setNewDescription(e.currentTarget.value)}
       />
       <Button
