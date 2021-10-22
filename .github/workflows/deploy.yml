@@ -16,7 +16,7 @@ jobs:
           yarn install
           yarn build
         env:
-          REACT_APP_OSRS_ITEMS_API_URL: https://xyjxget0z8.execute-api.eu-west-2.amazonaws.com/main
+          REACT_APP_OSRS_ITEMS_API_URL: https://52gryhn1ch.execute-api.eu-west-2.amazonaws.com/main
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
