@@ -15,7 +15,6 @@ import { styled } from "styletron-react";
 import { useState } from "react";
 import { Tabs, Tab } from "baseui/tabs-motion";
 import ItemsList from "./ItemsList";
-import { useGetTagGroups } from "../hooks/api";
 import TagGroupsList from "./TagGroupsList";
 import TagImporter from "./TagImporter";
 

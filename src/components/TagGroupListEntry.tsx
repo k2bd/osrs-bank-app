@@ -12,6 +12,9 @@ import { Check, Spinner } from "baseui/icon";
 import { Panel } from "baseui/accordion";
 import { FlexRow } from "../style";
 import { ListItem, ListItemLabel } from "baseui/list";
+import { Textarea } from "baseui/textarea";
+import { useState } from "react";
+import { Input } from "baseui/input";
 
 interface Props {
   groupName: string;
@@ -31,6 +34,10 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
   const [{ loading: putTagGroupLoading }, putTagGroup] = usePutTagGroup();
 
   const [{ data: iconItem }] = useGetItem(group?.itemIconId ?? 0);
+
+  const [newDescription, setNewDescription] = useState<string | undefined>(
+    group?.description
+  );
 
   const exportItems = group?.itemIconId
     ? allItems?.sort((x, y) =>
@@ -81,8 +88,37 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
         )
       }
     >
-      <ListItemLabel description={group.description}>{groupName}</ListItemLabel>
+      <ListItemLabel description={expanded ? "" : group.description}>
+        {groupName}
+      </ListItemLabel>
     </ListItem>
+  );
+
+  const editDescription = (
+    <FlexRow>
+      <Input
+        size="compact"
+        value={newDescription || group.description}
+        onChange={(e) => setNewDescription(e.currentTarget.value)}
+      />
+      <Button
+        size="compact"
+        kind="secondary"
+        isLoading={putTagGroupLoading && group.description !== newDescription}
+        disabled={putTagGroupLoading || group.description === newDescription}
+        onClick={async () => {
+          const newTagGroup: OsrsTagGroup = {
+            groupName,
+            description: newDescription,
+            itemIconId: group.itemIconId,
+          };
+          await putTagGroup({ data: newTagGroup });
+          await refetchGroup();
+        }}
+      >
+        Update description
+      </Button>
+    </FlexRow>
   );
 
   return (
@@ -93,6 +129,7 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
         expanded={expanded}
         onClick={() => setExpanded(expanded ? undefined : groupName)}
       >
+        {editDescription}
         {itemTokens}
       </Panel>
       {copyButton}

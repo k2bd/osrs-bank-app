@@ -12,7 +12,7 @@ import {
 
 export const useGetItem = (itemId: number) =>
   useAxios<OsrsItem>({
-    url: ITEM_ENDPOINT + `${itemId}`,
+    url: ITEM_ENDPOINT + `/${itemId}`,
     baseURL: OSRS_ITEMS_API_URL,
   });
 
@@ -57,6 +57,17 @@ export const useGetTagGroups = (params: {
     baseURL: OSRS_ITEMS_API_URL,
     params,
   });
+
+export const useDeleteTagGroup = () =>
+  useAxios<OsrsTagGroup>(
+    {
+      url: TAG_GROUP_ENDPOINT,
+      baseURL: OSRS_ITEMS_API_URL,
+      method: "DELETE",
+      params: {},
+    },
+    { manual: true, autoCancel: false }
+  );
 
 export const useGetItemTags = (itemId: number) =>
   useAxios<OsrsTag[]>({

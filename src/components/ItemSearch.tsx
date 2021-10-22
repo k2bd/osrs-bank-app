@@ -4,12 +4,17 @@ import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
 import { FormControl } from "baseui/form-control";
 import { StatefulPanel } from "baseui/accordion";
+import { OnChangeParams, OptionsT, Select, Value } from "baseui/select";
 
 interface Props {
   nameLike?: string;
   setNameLike: (value: string) => void;
   includeMembers: boolean;
   setIncludeMembers: (value: boolean) => void;
+  availableTags: OptionsT;
+  searchedTags: Value;
+  setSearchedTags: (params: OnChangeParams) => void;
+  tagSelectLoading: boolean;
 }
 
 const ItemSearch = ({
@@ -17,6 +22,10 @@ const ItemSearch = ({
   setNameLike,
   includeMembers,
   setIncludeMembers,
+  availableTags,
+  searchedTags,
+  setSearchedTags,
+  tagSelectLoading,
 }: Props) => {
   const [quickNameLike, setQuickNameLike] = useState(nameLike ?? "");
   const debouncedNameLikeChange = useCallback(debounce(setNameLike, 300), []);
@@ -44,6 +53,18 @@ const ItemSearch = ({
           >
             Include Members
           </Checkbox>
+        </FormControl>
+        <FormControl label={() => "Tags"}>
+          <Select
+            multi
+            disabled={tagSelectLoading}
+            isLoading={tagSelectLoading}
+            size="mini"
+            options={availableTags}
+            value={searchedTags}
+            placeholder="Select tags"
+            onChange={setSearchedTags}
+          />
         </FormControl>
       </StatefulPanel>
     </>

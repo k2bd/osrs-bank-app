@@ -13,17 +13,19 @@ const TagGroupSearch = ({ nameLike, setNameLike }: Props) => {
   const debouncedNameLikeChange = useCallback(debounce(setNameLike, 300), []);
 
   return (
-    <FormControl label="Filter Tags">
-      <Input
-        value={quickNameLike}
-        onChange={(e) => {
-          setQuickNameLike(e.currentTarget.value);
-          debouncedNameLikeChange(e.currentTarget.value);
-        }}
-        placeholder="Complete or partial tag name"
-        clearOnEscape
-      />
-    </FormControl>
+    <>
+      <FormControl label="Tag name">
+        <Input
+          value={quickNameLike}
+          onChange={(e) => {
+            setQuickNameLike(e.currentTarget.value);
+            debouncedNameLikeChange(e.currentTarget.value);
+          }}
+          placeholder="Complete or partial tag name"
+          clearOnEscape
+        />
+      </FormControl>
+    </>
   );
 };
 

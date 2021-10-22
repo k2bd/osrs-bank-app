@@ -25,6 +25,11 @@ const TagGroupsList = () => {
     refetchTagGroups,
   ] = useGetTagGroups({ nameLike });
 
+  // Refetch on new mount, e.g. when switching between tabs
+  useEffect(() => {
+    refetchTagGroups();
+  }, []);
+
   const pageTagGroups =
     availableTagGroups?.slice(
       pageSize * (currentPage - 1),
