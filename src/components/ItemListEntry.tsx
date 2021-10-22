@@ -94,7 +94,6 @@ const ItemListEntry = ({
     <Select
       creatable
       multi
-      disabled={selectLoading}
       isLoading={selectLoading}
       size="mini"
       options={tagOptions}

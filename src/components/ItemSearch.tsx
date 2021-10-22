@@ -22,10 +22,6 @@ const ItemSearch = ({
   setNameLike,
   includeMembers,
   setIncludeMembers,
-  availableTags,
-  searchedTags,
-  setSearchedTags,
-  tagSelectLoading,
 }: Props) => {
   const [quickNameLike, setQuickNameLike] = useState(nameLike ?? "");
   const debouncedNameLikeChange = useCallback(debounce(setNameLike, 300), []);
@@ -53,18 +49,6 @@ const ItemSearch = ({
           >
             Include Members
           </Checkbox>
-        </FormControl>
-        <FormControl label={() => "Tags"}>
-          <Select
-            multi
-            disabled={tagSelectLoading}
-            isLoading={tagSelectLoading}
-            size="mini"
-            options={availableTags}
-            value={searchedTags}
-            placeholder="Select tags"
-            onChange={setSearchedTags}
-          />
         </FormControl>
       </StatefulPanel>
     </>

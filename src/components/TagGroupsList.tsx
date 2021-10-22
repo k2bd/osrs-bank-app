@@ -50,6 +50,9 @@ const TagGroupsList = () => {
           groupName={groupName}
           expanded={expanded === groupName}
           setExpanded={setExpanded}
+          refetchTagGroups={async () => {
+            await refetchTagGroups();
+          }}
         />
       ));
 

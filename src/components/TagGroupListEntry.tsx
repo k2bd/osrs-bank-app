@@ -1,4 +1,5 @@
 import {
+  useDeleteTagGroup,
   useGetItem,
   useGetItemsByTag,
   useGetTagGroup,
@@ -8,23 +9,36 @@ import ItemToken from "./ItemToken";
 import { MdContentCopy } from "react-icons/md";
 import { Button } from "baseui/button";
 import useClipboard from "react-use-clipboard";
-import { Check, Spinner } from "baseui/icon";
+import { Check, Delete, Spinner } from "baseui/icon";
 import { Panel } from "baseui/accordion";
 import { FlexRow } from "../style";
 import { ListItem, ListItemLabel } from "baseui/list";
-import { Textarea } from "baseui/textarea";
 import { useState } from "react";
 import { Input } from "baseui/input";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalButton,
+  SIZE,
+  ROLE,
+} from "baseui/modal";
 
 interface Props {
   groupName: string;
   expanded: boolean;
   setExpanded: (groupName?: string) => void;
+  refetchTagGroups: () => Promise<void>;
 }
 
-const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
-  const [{ data: group, loading: groupLoading }, refetchGroup] =
-    useGetTagGroup(groupName);
+const TagGroupListEntry = ({
+  groupName,
+  expanded,
+  setExpanded,
+  refetchTagGroups,
+}: Props) => {
+  const [{ data: group }, refetchGroup] = useGetTagGroup(groupName);
 
   const [{ data: mainItems }] = useGetItemsByTag(groupName, {});
   const [{ data: allItems }] = useGetItemsByTag(groupName, {
@@ -32,12 +46,15 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
   });
 
   const [{ loading: putTagGroupLoading }, putTagGroup] = usePutTagGroup();
+  const [, deleteTagGroup] = useDeleteTagGroup();
 
-  const [{ data: iconItem }] = useGetItem(group?.itemIconId ?? 0);
+  const [{ data: iconItem }] = useGetItem(group?.itemIconId ?? -1);
 
   const [newDescription, setNewDescription] = useState<string | undefined>(
     group?.description
   );
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const exportItems = group?.itemIconId
     ? allItems?.sort((x, y) =>
@@ -51,7 +68,7 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
     successDuration: 500,
   });
 
-  if (!group || groupLoading) {
+  if (!group) {
     return <Spinner />;
   }
 
@@ -81,16 +98,14 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
   const title = (
     <ListItem
       artwork={() =>
-        group.itemIconId && iconItem ? (
+        group.itemIconId !== undefined && iconItem ? (
           <img src={`data:image/jpeg;base64,${iconItem.iconBase64}`} />
         ) : (
           <></>
         )
       }
     >
-      <ListItemLabel description={expanded ? "" : group.description}>
-        {groupName}
-      </ListItemLabel>
+      <ListItemLabel description={group.description}>{groupName}</ListItemLabel>
     </ListItem>
   );
 
@@ -104,7 +119,6 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
       <Button
         size="compact"
         kind="secondary"
-        isLoading={putTagGroupLoading && group.description !== newDescription}
         disabled={putTagGroupLoading || group.description === newDescription}
         onClick={async () => {
           const newTagGroup: OsrsTagGroup = {
@@ -121,19 +135,68 @@ const TagGroupListEntry = ({ groupName, expanded, setExpanded }: Props) => {
     </FlexRow>
   );
 
+  const handleDelete = async () => {
+    await deleteTagGroup({ data: group });
+    await refetchTagGroups();
+  };
+
+  const deleteModal = (
+    <Modal
+      onClose={() => setDeleteModalOpen(false)}
+      closeable
+      isOpen={deleteModalOpen}
+      animate
+      autoFocus
+      size={SIZE.default}
+      role={ROLE.dialog}
+    >
+      <ModalHeader>Delete tag group?</ModalHeader>
+      <ModalBody>
+        This will delete the tag group and remove the tag from all items.
+      </ModalBody>
+      <ModalFooter>
+        <ModalButton kind="tertiary" onClick={() => setDeleteModalOpen(false)}>
+          Cancel
+        </ModalButton>
+        <ModalButton
+          kind="primary"
+          onClick={async () => {
+            setDeleteModalOpen(false);
+            await handleDelete();
+          }}
+        >
+          Delete
+        </ModalButton>
+      </ModalFooter>
+    </Modal>
+  );
+
   return (
-    <FlexRow>
-      <Panel
-        key={groupName}
-        title={title}
-        expanded={expanded}
-        onClick={() => setExpanded(expanded ? undefined : groupName)}
-      >
-        {editDescription}
-        {itemTokens}
-      </Panel>
-      {copyButton}
-    </FlexRow>
+    <>
+      <FlexRow>
+        <Panel
+          key={groupName}
+          title={title}
+          expanded={expanded}
+          onClick={() => setExpanded(expanded ? undefined : groupName)}
+        >
+          {editDescription}
+          {itemTokens}
+          <FlexRow>
+            <Button
+              onClick={() => setDeleteModalOpen(true)}
+              startEnhancer={() => <Delete />}
+              kind="secondary"
+              size="mini"
+            >
+              Delete Group
+            </Button>
+          </FlexRow>
+        </Panel>
+        {copyButton}
+      </FlexRow>
+      {deleteModal}
+    </>
   );
 };
 
