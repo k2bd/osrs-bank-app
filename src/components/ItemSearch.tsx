@@ -4,7 +4,7 @@ import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
 import { FormControl } from "baseui/form-control";
 import { StatefulPanel } from "baseui/accordion";
-import { OnChangeParams, OptionsT, Select, Value } from "baseui/select";
+import { OnChangeParams, OptionsT, Value } from "baseui/select";
 
 interface Props {
   nameLike?: string;
